@@ -60,11 +60,6 @@ jobs:
     
     - name: Deploy to AKS
       run: |       
-        # Replace image tag in deployment
-        FULL_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}"
-        echo "Replacing <IMAGE_TAG> with: $FULL_IMAGE"
-        sed -i "s|<IMAGE_TAG>|$FULL_IMAGE|g" k8s/deployment.yaml
-        
         # Apply Kubernetes manifests
         kubectl apply -f k8s/namespace.yaml
         kubectl apply -f k8s/configmap.yaml
