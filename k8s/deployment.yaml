@@ -15,9 +15,11 @@ spec:
       labels:
         app: orlando-pd-monitor
     spec:
+      imagePullSecrets:
+      - name: ghcr-secret
       containers:
       - name: orlando-pd-monitor
-        image: latest  # This will be replaced by GitHub Actions
+        image: <IMAGE_TAG>  # This will be replaced by GitHub Actions
         imagePullPolicy: Always
         env:
         - name: NTFY_TOPIC

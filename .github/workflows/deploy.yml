@@ -70,6 +70,14 @@ jobs:
           --from-literal=resend-api-key="${{ secrets.RESEND_API_KEY }}" \
           --dry-run=client -o yaml | kubectl apply -f -
         
+        # Create image pull secret for GHCR
+        kubectl create secret docker-registry ghcr-secret \
+          --namespace=orlando-pd-monitor \
+          --docker-server=${{ env.REGISTRY }} \
+          --docker-username=${{ github.actor }} \
+          --docker-password=${{ secrets.GITHUB_TOKEN }} \
+          --dry-run=client -o yaml | kubectl apply -f -
+        
         kubectl apply -f k8s/deployment.yaml
         
         # Wait for deployment to be ready
