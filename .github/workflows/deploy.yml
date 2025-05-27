@@ -47,9 +47,16 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
+    - name: Setup kubelogin
+      uses: Azure/use-kubelogin@v1
+      with:
+        kubelogin-version: "v0.0.24"
+    
     - name: Get AKS credentials
       run: |
         az aks get-credentials --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+        # Convert to use kubelogin for AAD authentication
+        kubelogin convert-kubeconfig -l azurecli
     
     - name: Deploy to AKS
       run: |
