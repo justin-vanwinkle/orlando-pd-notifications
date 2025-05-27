@@ -78,6 +78,9 @@ jobs:
           --docker-password=${{ secrets.GITHUB_TOKEN }} \
           --dry-run=client -o yaml | kubectl apply -f -
         
+        # Replace the image tag in the deployment.yaml file
+        sed -i "s/<IMAGE_TAG>/${{ github.run_number }}/g" k8s/deployment.yaml
+        
         kubectl apply -f k8s/deployment.yaml
         
         # Wait for deployment to be ready
