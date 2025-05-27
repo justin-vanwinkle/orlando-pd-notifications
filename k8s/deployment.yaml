@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: orlando-pd-monitor
-        image: <IMAGE_TAG>  # This will be replaced by GitHub Actions
+        image: latest  # This will be replaced by GitHub Actions
         imagePullPolicy: Always
         env:
         - name: NTFY_TOPIC
