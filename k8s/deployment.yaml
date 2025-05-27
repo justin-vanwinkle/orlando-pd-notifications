@@ -19,7 +19,7 @@ spec:
       - name: ghcr-secret
       containers:
       - name: orlando-pd-monitor
-        image: ghcr.io/justinvanwinkle/orlando-pd-monitor:latest  # This will be replaced by GitHub Actions
+        image: ghcr.io/justin-vanwinkle/orlando-pd-notifications:latest  # This will be replaced by GitHub Actions
         imagePullPolicy: Always
         env:
         - name: NTFY_TOPIC
