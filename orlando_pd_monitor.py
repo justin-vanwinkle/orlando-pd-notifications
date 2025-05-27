@@ -116,11 +116,14 @@ class Config:
 
 def parse_arguments() -> Config:
     """
-    Parse command line arguments and return configuration.
+    Parse command line arguments and environment variables for configuration.
+    Environment variables take precedence over command line arguments.
     
     Returns:
         Config object with parsed settings
     """
+    import os
+    
     parser = argparse.ArgumentParser(
         description="Monitor Orlando PD active calls for specific locations",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -128,46 +131,69 @@ def parse_arguments() -> Config:
 Examples:
   %(prog)s --topic my-alerts
   %(prog)s --topic police-watch --search FORELAND --interval 60
+
+Environment Variables:
+  NTFY_TOPIC       - ntfy.sh topic name (required)
+  SEARCH_TERM      - Search term for locations
+  POLL_INTERVAL    - Polling interval in seconds
+  RESEND_API_KEY   - Resend API key for email notifications
+  EMAIL_TO         - Email address(es) for notifications
+  EMAIL_FROM       - Email address to send from
+  VERBOSE          - Enable verbose logging (true/false)
         """
     )
     
+    # Get environment variables with defaults
+    env_topic = os.getenv('NTFY_TOPIC')
+    env_search = os.getenv('SEARCH_TERM', DEFAULT_SEARCH_TERM)
+    env_interval = int(os.getenv('POLL_INTERVAL', DEFAULT_POLL_INTERVAL))
+    env_verbose = os.getenv('VERBOSE', '').lower() in ('true', '1', 'yes')
+    env_resend_key = os.getenv('RESEND_API_KEY')
+    env_email_to = os.getenv('EMAIL_TO')
+    env_email_from = os.getenv('EMAIL_FROM')
+    
     parser.add_argument(
         "--topic", 
-        required=True,
+        default=env_topic,
+        required=env_topic is None,  # Only required if not in environment
         help="ntfy.sh topic name to send notifications to"
     )
     
     parser.add_argument(
         "--search",
-        default=DEFAULT_SEARCH_TERM,
+        default=env_search,
         help=f"Search term for call locations (default: {DEFAULT_SEARCH_TERM})"
     )
     
     parser.add_argument(
         "--interval",
         type=int,
-        default=DEFAULT_POLL_INTERVAL,
+        default=env_interval,
         help=f"Polling interval in seconds (default: {DEFAULT_POLL_INTERVAL})"
     )
     
     parser.add_argument(
         "--verbose", "-v",
         action="store_true",
+        default=env_verbose,
         help="Enable verbose logging"
     )
     
     parser.add_argument(
         "--resend-api-key",
+        default=env_resend_key,
         help="Resend API key for email notifications"
     )
     
     parser.add_argument(
         "--email-to",
+        default=env_email_to,
         help="Email address(es) to send notifications to (comma-separated for multiple)"
     )
     
     parser.add_argument(
         "--email-from",
+        default=env_email_from,
         help="Email address to send notifications from"
     )
     
