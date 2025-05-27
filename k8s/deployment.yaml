@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orlando-pd-monitor
+  namespace: orlando-pd-monitor
+  labels:
+    app: orlando-pd-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orlando-pd-monitor
+  template:
+    metadata:
+      labels:
+        app: orlando-pd-monitor
+    spec:
+      containers:
+      - name: orlando-pd-monitor
+        image: <IMAGE_TAG>  # This will be replaced by GitHub Actions
+        imagePullPolicy: Always
+        env:
+        - name: NTFY_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: orlando-pd-monitor-config
+              key: NTFY_TOPIC
+        - name: SEARCH_TERM
+          valueFrom:
+            configMapKeyRef:
+              name: orlando-pd-monitor-config
+              key: SEARCH_TERM
+        - name: POLL_INTERVAL
+          valueFrom:
+            configMapKeyRef:
+              name: orlando-pd-monitor-config
+              key: POLL_INTERVAL
+        - name: EMAIL_TO
+          valueFrom:
+            configMapKeyRef:
+              name: orlando-pd-monitor-config
+              key: EMAIL_TO
+        - name: EMAIL_FROM
+          valueFrom:
+            configMapKeyRef:
+              name: orlando-pd-monitor-config
+              key: EMAIL_FROM
+        - name: VERBOSE
+          valueFrom:
+            configMapKeyRef:
+              name: orlando-pd-monitor-config
+              key: VERBOSE
+        - name: RESEND_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: orlando-pd-monitor-secrets
+              key: resend-api-key
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        # Health checks
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - -f
+            - python
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - pgrep
+            - -f
+            - python
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 2
+      restartPolicy: Always 

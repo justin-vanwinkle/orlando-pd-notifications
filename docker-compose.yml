@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  orlando-pd-monitor:
+    build: .
+    container_name: orlando-pd-monitor
+    restart: unless-stopped
+    environment:
+      # Override these in .env file or pass via command line
+      - NTFY_TOPIC=${NTFY_TOPIC:-orlando-pd-alerts}
+      - SEARCH_TERM=${SEARCH_TERM:-FORELAND}
+      - POLL_INTERVAL=${POLL_INTERVAL:-30}
+      - VERBOSE=${VERBOSE:-false}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - EMAIL_TO=${EMAIL_TO}
+      - EMAIL_FROM=${EMAIL_FROM}
+    command: >
+      --topic ${NTFY_TOPIC:-orlando-pd-alerts}
+      --search ${SEARCH_TERM:-FORELAND}
+      --interval ${POLL_INTERVAL:-30}
+      ${VERBOSE:+--verbose}
+      ${RESEND_API_KEY:+--resend-api-key ${RESEND_API_KEY}}
+      ${EMAIL_TO:+--email-to ${EMAIL_TO}}
+      ${EMAIL_FROM:+--email-from ${EMAIL_FROM}}
+    # Uncomment to run in background
+    # stdin_open: true
+    # tty: true 

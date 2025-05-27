@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orlando-pd-monitor-config
+  namespace: orlando-pd-monitor
+data:
+  NTFY_TOPIC: "justin-orlando-pd"
+  SEARCH_TERM: "FORELAND"
+  POLL_INTERVAL: "30"
+  EMAIL_TO: "vanwinkle.justin@gmail.com,meganbring@gmail.com"
+  EMAIL_FROM: "justin@product-advantage.com"
+  VERBOSE: "false" 
